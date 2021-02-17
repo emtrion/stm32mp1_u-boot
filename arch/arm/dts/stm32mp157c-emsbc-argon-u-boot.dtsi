@@ -75,10 +75,6 @@
 	};
 };
 
-&pmic {
-	u-boot,dm-pre-reloc;
-};
-
 &rcc {
 	st,clksrc = <
 		CLK_MPU_PLL1P
@@ -205,15 +201,6 @@
 &usbotg_hs {
 	usb1600;
 	hnp-srp-disable;
-};
-
-&v3v3 {
-	regulator-always-on;
-};
-
-&flash0 {
-	compatible = "spi-flash";
-	u-boot,dm-spl;
 };
 
 &qspi {
