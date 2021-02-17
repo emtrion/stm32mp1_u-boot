@@ -223,6 +223,36 @@
 
 #include <config_distro_bootcmd.h>
 
+#define SD_BOOT \
+	"sd_boot=ext4load mmc 0:4 ${kernel_addr_r} /boot/zImage;ext4load mmc 0:4 ${fdt_addr_r} /boot/stm32mp157c-emsbc-argon.dtb;" \
+	"setenv bootargs \"console=ttySTM0,115200 root=/dev/mmcblk0p4 rootwait\";"\
+	"bootz ${kernel_addr_r} - ${fdt_addr_r};\0"
+#define EMMC_BOOT \
+	"emmc_boot=ext4load mmc 1:0 ${kernel_addr_r} /boot/zImage;ext4load mmc 1:0 ${fdt_addr_r} /boot/stm32mp157c-emsbc-argon.dtb;" \
+	"setenv bootargs \"console=ttySTM0,115200 root=/dev/mmcblk1 rootwait\";"\
+	"bootz ${kernel_addr_r} - ${fdt_addr_r};\0"
+#define CONFIGURE_IP \
+	"configure-ip=if test -n \"${ip-method}\"; \
+	then if test \"${ip-method}\" = dhcp; \
+	then setenv ip dhcp && setenv autoload no && dhcp ; \
+	elif test \"${ip-method}\" = static; \
+	then if test -n \"${ipaddr}\" && test -n \"${serverip}\" && test -n \"${netmask}\"; \
+	then setenv ip ${ipaddr}:${serverip}:${gatewayip}:${netmask}:${hostname}:eth0:off; \
+	else echo You have to set ipaddr, netmask and serverip when using ip-method static. ;  false; fi; \
+	else echo ip-method has to be either dhcp or static. ; false ; fi; else echo ip-method has to be either dhcp or static. ; false ; fi\0"
+#define NFS_TEST \
+	"test-nfsroot=if test -n \"${nfsroot}\"; then true ; else echo Please set nfsroot variable. ; false ; fi\0"
+#define NET_BOOT \
+	"net_boot=run configure-ip && run test-nfsroot && nfs ${nfsroot}/boot/uboot_script && env import -t ${fileaddr} ${filesize} && if test -n \"${uboot_script_net_boot}\"; then run uboot_script_net_boot; else echo Bootscript does not define uboot_script_net_boot, aborting. ; fi\0"
+#define UPDATE_UBOOT \
+	"update_uboot=if test -n \"${serverip}\"; then run configure-ip && sf probe && sf erase fsbl1 0x40000 && sf erase fsbl2 0x40000 && nfs ${kernel_addr_r} ${nfsroot}/boot/u-boot-spl.stm32-stm32mp157c-emsbc-argon-basic && sf write $fileaddr fsbl1 $filesize && sf write $fileaddr fsbl2 $filesize && sf erase ssbl 0x100000 && nfs ${nfsroot}/boot/u-boot-stm32mp157c-emsbc-argon-basic.img && sf write $fileaddr ssbl $filesize && echo Update U-Boot successful; else echo Please set serverip variable. ; fi\0"
+#define UPDATE_KERNEL \
+	"update_kernel=if test -n \"${serverip}\"; then run configure-ip && run test-nfsroot && nfs ${nfsroot}/boot/uboot_script && env import -t ${fileaddr} ${filesize} && if test -n \"${uboot_script_update_kernel}\"; then run uboot_script_update_kernel; else echo Bootscript does not define uboot_script_update kernel, aborting ; fi ; else echo Please set serverip variable. ; fi\0"
+#define UPDATE_ROOTFS \
+	"update_rootfs=if test -n \"${serverip}\"; then run configure-ip && run test-nfsroot && nfs ${nfsroot}/boot/uboot_script && env import -t ${fileaddr} ${filesize} && if test -n \"${uboot_script_update_rootfs}\" ; then run uboot_script_update_rootfs; else echo Bootscript does not define update_rootfs, aborting ; fi ; else echo Please set serverip variable. ; fi\0"
+#define RES_SYS \
+	"restore_sys=if test -n \"${serverip}\"; then run configure-ip && run test-nfsroot && nfs ${nfsroot}/boot/uboot_script && env import -t ${fileaddr} ${filesize} && if test -n \"${uboot_script_restore_sys}\"; then run uboot_script_restore_sys; else echo Bootscript does not define uboot_script_restore_sys, aborting. ; fi ; else echo Please set serverip variable. ; fi\0"
+
 /*
  * memory layout for 32M uncompressed/compressed kernel,
  * 1M fdt, 1M script, 1M pxe and 1M for splashimage
@@ -249,7 +279,15 @@
 	STM32MP_ANDROID \
 	PARTS_DEFAULT \
 	BOOTENV \
-	"boot_net_usb_start=true\0"
+	SD_BOOT \
+	EMMC_BOOT \
+	CONFIGURE_IP \
+	NFS_TEST \
+	NET_BOOT \
+	UPDATE_UBOOT \
+	UPDATE_KERNEL \
+	UPDATE_ROOTFS \
+	RES_SYS
 
 #endif /* ifndef CONFIG_SPL_BUILD */
 #endif /* ifdef CONFIG_DISTRO_DEFAULTS*/
