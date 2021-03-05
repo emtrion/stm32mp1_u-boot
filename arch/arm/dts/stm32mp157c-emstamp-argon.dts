@@ -116,7 +116,6 @@
 };
 
 &pinctrl {
-	u-boot,dm-pre-reloc;
 	ethernet0_rmii_pins_a: eth0_mx-0 {
 		pins1 {
 			pinmux = <STM32_PINMUX('B', 5, AF0)>, /* ETH1_CLK */
@@ -775,15 +774,10 @@
 	status = "okay";
 };
 
-&pmic {
-	u-boot,dm-pre-reloc;
-};
-
 &v3v3 {
 	regulator-always-on;
 };
 
 &flash0 {
 	compatible = "spi-flash";
-	u-boot,dm-spl;
 };
