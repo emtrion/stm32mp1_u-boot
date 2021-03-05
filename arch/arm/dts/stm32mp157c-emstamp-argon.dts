@@ -551,6 +551,14 @@
 	vdd-supply = <&vdd>;
 };
 
+&cpu0 {
+	cpu-supply = <&vddcore>;
+};
+
+&cpu1 {
+	cpu-supply = <&vddcore>;
+};
+
 &qspi {
 	pinctrl-names = "default";
 	pinctrl-0 = <&qspi_clk_pins_a &qspi_bk1_pins_a>;
