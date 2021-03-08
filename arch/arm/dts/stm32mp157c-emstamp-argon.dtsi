@@ -568,7 +568,7 @@
 	status = "okay";
 
 	flash0: is25lp016@0 {
-		compatible = "issi,is25lp016", "spi-flash";
+		compatible = "issi,is25lp016", "spi-flash", "jedec,spi-nor";
 		reg = <0>;
 		spi-max-frequency = <10000000>;
 		spi-rx-bus-width = <1>;
@@ -799,8 +799,4 @@
 
 &v3v3 {
 	regulator-always-on;
-};
-
-&flash0 {
-	compatible = "spi-flash";
 };
