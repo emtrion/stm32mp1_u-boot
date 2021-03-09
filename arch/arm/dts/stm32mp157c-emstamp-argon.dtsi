@@ -222,6 +222,8 @@
 	phy-mode = "rmii";
 	max-speed = <100>;
 	phy-handle = <&phy0>;
+	nvmem-cells = <&ethernet_mac_address>;
+	nvmem-cell-names = "mac-address";
 	clock-names = "stmmaceth",
 		"mac-clk-tx",
 		"mac-clk-rx",
@@ -242,6 +244,7 @@
 		compatible = "snps,dwmac-mdio";
 		phy0: ethernet-phy@0 {
 			reg = <0>;
+			reset-gpios = <&gpioa 1 GPIO_ACTIVE_LOW>;
 		};
 	};
 };
