@@ -40,19 +40,19 @@
 		#size-cells = <1>;
 		ranges;
 
-		retram: retram@0x38000000 {
+		retram: retram@38000000 {
 			compatible = "shared-dma-pool";
 			reg = <0x38000000 0x10000>;
 			no-map;
 		};
 
-		mcuram: mcuram@0x30000000 {
+		mcuram: mcuram@30000000 {
 			compatible = "shared-dma-pool";
 			reg = <0x30000000 0x40000>;
 			no-map;
 		};
 
-		mcuram2: mcuram2@0x10000000 {
+		mcuram2: mcuram2@10000000 {
 			compatible = "shared-dma-pool";
 			reg = <0x10000000 0x40000>;
 			no-map;
