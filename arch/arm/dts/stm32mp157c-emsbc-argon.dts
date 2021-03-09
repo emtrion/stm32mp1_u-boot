@@ -28,9 +28,10 @@
 	st,neg-edge;
 	bus-width = <4>;
 	vmmc-supply = <&v3v3>;
-	mmc-pwrseq = <&emmc_pwrseq>;
-	#address-cells = <1>;
-	#size-cells = <0>;
+	vqmmc-supply = <&vdd>;
 	keep-power-in-suspend;
+	no-sd;
+	no-sdio;
+	mmc-ddr-3_3v;
 	status = "okay";
 };
