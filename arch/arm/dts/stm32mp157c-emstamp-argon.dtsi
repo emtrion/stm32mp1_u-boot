@@ -482,7 +482,7 @@
 
 		watchdog {
 			compatible = "st,stpmic1-wdt";
-			status = "disabled";
+			status = "okay";
 		};
 	};
 };
@@ -521,7 +521,7 @@
 
 &iwdg2 {
 	timeout-sec = <32>;
-	status = "disable";
+	status = "okay";
 };
 
 &ltdc {
