@@ -99,6 +99,8 @@ void board_mtdparts_default(const char **mtdids, const char **mtdparts)
 	case BOOT_FLASH_SPINAND:
 		spinand = true;
 		break;
+	case BOOT_FLASH_SD:
+	case BOOT_FLASH_EMMC:
 	case BOOT_FLASH_NOR:
 		nor = true;
 		break;
