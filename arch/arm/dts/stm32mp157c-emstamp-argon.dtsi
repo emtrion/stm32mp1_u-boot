@@ -479,11 +479,6 @@
 			interrupt-names = "onkey-falling", "onkey-rising";
 			status = "okay";
 		};
-
-		watchdog {
-			compatible = "st,stpmic1-wdt";
-			status = "okay";
-		};
 	};
 };
 
