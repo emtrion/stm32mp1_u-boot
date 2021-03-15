@@ -138,19 +138,11 @@
  */
 
 #define STM32MP_BOOTCMD "bootcmd_stm32mp=" \
-	"echo \"Boot over ${boot_device}${boot_instance}!\";" \
-	"if test ${boot_device} = serial || test ${boot_device} = usb;" \
-	"then stm32prog ${boot_device} ${boot_instance}; " \
+	"if test ${boot_device} = serial || test ${boot_device} = usb; then " \
+		"stm32prog ${boot_device} ${boot_instance}; " \
 	"else " \
-		"run env_check;" \
-		"if test ${boot_device} = mmc;" \
-		"then env set boot_targets \"mmc${boot_instance}\"; fi;" \
-		"if test ${boot_device} = nand ||" \
-		  " test ${boot_device} = spi-nand ;" \
-		"then env set boot_targets ubifs0; fi;" \
-		"if test ${boot_device} = nor;" \
-		"then env set boot_targets mmc0; fi;" \
-		"run distro_bootcmd;" \
+		"if test ${boot_device} = mmc; then run emmc_boot; fi;" \
+		"if test ${boot_device} = nor; then run emmc_boot; fi;" \
 	"fi;\0"
 
 /* DTIMG command added only for Android distribution */
@@ -224,13 +216,13 @@
 #include <config_distro_bootcmd.h>
 
 #define SD_BOOT \
-	"sd_boot=ext4load mmc 0:4 ${kernel_addr_r} /boot/zImage;ext4load mmc 0:4 ${fdt_addr_r} /boot/stm32mp157c-emsbc-argon.dtb;" \
-	"setenv bootargs \"console=ttySTM0,115200 root=/dev/mmcblk0p4 rootwait\";"\
-	"bootz ${kernel_addr_r} - ${fdt_addr_r};\0"
+	"sd_boot=ext4load mmc 0:4 ${kernel_addr_r} /boot/${image.linux};" \
+	"setenv bootargs \"console=${console} root=/dev/mmcblk0p4 rw rootwait mtdparts=256k(fsbl1),256k(fsbl2),1m(ssbl)\";" \
+	"bootm ${kernel_addr_r};\0"
 #define EMMC_BOOT \
-	"emmc_boot=ext4load mmc 1:0 ${kernel_addr_r} /boot/zImage;ext4load mmc 1:0 ${fdt_addr_r} /boot/stm32mp157c-emsbc-argon.dtb;" \
-	"setenv bootargs \"console=ttySTM0,115200 root=/dev/mmcblk1 rootwait\";"\
-	"bootz ${kernel_addr_r} - ${fdt_addr_r};\0"
+	"emmc_boot=ext4load mmc 1:3 ${kernel_addr_r} /boot/${image.linux};" \
+	"setenv bootargs \"console=${console} root=/dev/mmcblk1p3 rw rootwait mtdparts=256k(fsbl1),256k(fsbl2),1m(ssbl)\";" \
+	"bootm ${kernel_addr_r};\0"
 #define CONFIGURE_IP \
 	"configure-ip=if test -n \"${ip-method}\"; \
 	then if test \"${ip-method}\" = dhcp; \
@@ -259,22 +251,19 @@
  * and the ramdisk at the end.
  */
 #define CONFIG_EXTRA_ENV_SETTINGS \
+	"stdin=serial\0" \
+	"stdout=serial\0" \
+	"stderr=serial\0" \
 	"bootdelay=1\0" \
+	"console=ttySTM0,115200\0" \
 	"kernel_addr_r=0xc2000000\0" \
+	"image.linux=linux\0" \
 	"fdt_addr_r=0xc4000000\0" \
 	"scriptaddr=0xc4100000\0" \
-	"pxefile_addr_r=0xc4200000\0" \
-	"splashimage=0xc4300000\0"  \
 	"ramdisk_addr_r=0xc4400000\0" \
-	"altbootcmd=run bootcmd\0" \
-	"env_check=" \
-		"env exists env_ver || env set env_ver ${ver};" \
-		"if env info -p -d -q; then env save; fi;" \
-		"if test \"$env_ver\" != \"$ver\"; then" \
-		" echo \"*** Warning: old environment ${env_ver}\";" \
-		" echo '* set default: env default -a; env save; reset';" \
-		" echo '* update current: env set env_ver ${ver}; env save';" \
-		"fi;\0" \
+	"fdt_high=0xffffffff\0" \
+	"initrd_high=0xffffffff\0" \
+	"bootlimit=0\0" \
 	STM32MP_BOOTCMD \
 	STM32MP_ANDROID \
 	PARTS_DEFAULT \
