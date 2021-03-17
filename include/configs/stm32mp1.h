@@ -217,11 +217,11 @@
 
 #define SD_BOOT \
 	"sd_boot=ext4load mmc 0:4 ${kernel_addr_r} /boot/${image.linux};" \
-	"setenv bootargs \"console=${console} root=/dev/mmcblk0p4 rw rootwait mtdparts=256k(fsbl1),256k(fsbl2),1m(ssbl)\";" \
+	"setenv bootargs \"console=${console} root=/dev/mmcblk0p4 rw rootwait\";" \
 	"bootm ${kernel_addr_r};\0"
 #define EMMC_BOOT \
 	"emmc_boot=ext4load mmc 1:3 ${kernel_addr_r} /boot/${image.linux};" \
-	"setenv bootargs \"console=${console} root=/dev/mmcblk1p3 rw rootwait mtdparts=256k(fsbl1),256k(fsbl2),1m(ssbl)\";" \
+	"setenv bootargs \"console=${console} root=/dev/mmcblk1p3 rw rootwait\";" \
 	"bootm ${kernel_addr_r};\0"
 #define CONFIGURE_IP \
 	"configure-ip=if test -n \"${ip-method}\"; \
