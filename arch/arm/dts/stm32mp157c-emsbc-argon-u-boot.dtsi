@@ -20,6 +20,7 @@
 		u-boot,boot-led = "heartbeat";
 		u-boot,error-led = "error";
 		st,adc_usb_pd = <&adc1 18>, <&adc1 19>;
+		st,stm32prog-gpios = <&gpioa 12 GPIO_ACTIVE_LOW>;
 	};
 	led {
 		green {
