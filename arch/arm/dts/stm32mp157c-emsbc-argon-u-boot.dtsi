@@ -140,8 +140,3 @@
 		bias-pull-up;
 	};
 };
-
-&usbotg_hs {
-	usb1600;
-	hnp-srp-disable;
-};

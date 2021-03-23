@@ -547,6 +547,7 @@
 
 &pwr_regulators {
 	vdd-supply = <&vdd>;
+	vdd_3v3_usbfs-supply = <&vdd_usb>;
 };
 
 &cpu0 {
@@ -768,6 +769,11 @@
 };
 
 &usbotg_hs {
+	pinctrl-names = "default";
+	pinctrl-0 = <&usbotg_hs_pins_a>;
+	vbus-supply = <&vbus_otg>;
+	usb1600;
+	hnp-srp-disable;
 	dr_mode = "peripheral";
 	force-b-session-valid;
 	phys = <&usbphyc_port1 0>;
@@ -776,15 +782,17 @@
 };
 
 &usbphyc {
-	vdd3v3-supply = <&vdd_usb>;
 	status = "okay";
 };
 
 &usbphyc_port0 {
+	phy-supply = <&vdd_usb>;
+	vbus-supply = <&vdd_usb>;
 	st,phy-tuning = <&usb_phy_tuning>;
 };
 
 &usbphyc_port1 {
+	phy-supply = <&vbus_sw>;
 	st,phy-tuning = <&usb_phy_tuning>;
 };
 
