@@ -937,6 +937,8 @@ enum env_location env_get_location(enum env_operation op, int prio)
 	case BOOT_FLASH_SD:
 	case BOOT_FLASH_EMMC:
 	case BOOT_FLASH_NOR:
+	case BOOT_SERIAL_USB:
+	case BOOT_SERIAL_USB_OTG:
 		return ENVL_SPI_FLASH;
 #endif
 	default:
