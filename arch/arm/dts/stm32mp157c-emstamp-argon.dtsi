@@ -236,7 +236,7 @@
 		<&rcc ETHSTP>,
 		<&rcc ETHCK_K>,
 		<&rcc SYSCFG>;
-	st,eth_ref_clk_sel="true";
+	st,eth_ref_clk_sel;
 	phy-reset-gpios = <&gpioa 1 GPIO_ACTIVE_LOW>;
 	mdio0 {
 		#address-cells = <1>;
@@ -455,22 +455,22 @@
 				regulator-over-current-protection;
 			};
 
-			 bst_out: boost {
+			bst_out: boost {
 				regulator-name = "bst_out";
 				interrupts = <IT_OCP_BOOST 0>;
-			 };
+			};
 
 			vbus_otg: pwr_sw1 {
 				regulator-name = "vbus_otg";
 				interrupts = <IT_OCP_OTG 0>;
 				regulator-active-discharge;
-			 };
+			};
 
-			 vbus_sw: pwr_sw2 {
+			vbus_sw: pwr_sw2 {
 				regulator-name = "vbus_sw";
 				interrupts = <IT_OCP_SWOUT 0>;
 				regulator-active-discharge;
-			 };
+			};
 		};
 
 		onkey {
