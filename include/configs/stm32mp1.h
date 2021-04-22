@@ -254,7 +254,7 @@
 	"stdin=serial\0" \
 	"stdout=serial\0" \
 	"stderr=serial\0" \
-	"bootdelay=1\0" \
+	"bootdelay=2\0" \
 	"console=ttySTM0,115200\0" \
 	"kernel_addr_r=0xc2000000\0" \
 	"image.linux=linux\0" \
@@ -265,9 +265,6 @@
 	"initrd_high=0xffffffff\0" \
 	"bootlimit=0\0" \
 	STM32MP_BOOTCMD \
-	STM32MP_ANDROID \
-	PARTS_DEFAULT \
-	BOOTENV \
 	SD_BOOT \
 	EMMC_BOOT \
 	CONFIGURE_IP \
