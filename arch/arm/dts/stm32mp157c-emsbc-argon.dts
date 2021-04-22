@@ -11,11 +11,6 @@
 / {
 	model = "emtrion emSBC-Argon";
 	compatible = "emtrion,stm32mp157c-emsbc-argon", "st,stm32mp157";
-
-	emmc_pwrseq: emmc-pwrseq {
-		compatible = "mmc-pwrseq-simple";
-		reset-gpios = <&gpiof 14 GPIO_ACTIVE_LOW>;
-	};
 };
 
 &sdmmc2 {
