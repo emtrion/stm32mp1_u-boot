@@ -236,14 +236,8 @@
 	"test-nfsroot=if test -n \"${nfsroot}\"; then true ; else echo Please set nfsroot variable. ; false ; fi\0"
 #define NET_BOOT \
 	"net_boot=run configure-ip && run test-nfsroot && nfs ${nfsroot}/boot/uboot_script && env import -t ${fileaddr} ${filesize} && if test -n \"${uboot_script_net_boot}\"; then run uboot_script_net_boot; else echo Bootscript does not define uboot_script_net_boot, aborting. ; fi\0"
-#define UPDATE_UBOOT \
-	"update_uboot=if test -n \"${serverip}\"; then run configure-ip && sf probe && sf erase fsbl1 0x40000 && sf erase fsbl2 0x40000 && nfs ${kernel_addr_r} ${nfsroot}/boot/u-boot-spl.stm32-stm32mp157c-emsbc-argon-basic && sf write $fileaddr fsbl1 $filesize && sf write $fileaddr fsbl2 $filesize && sf erase ssbl 0x100000 && nfs ${nfsroot}/boot/u-boot-stm32mp157c-emsbc-argon-basic.img && sf write $fileaddr ssbl $filesize && echo Update U-Boot successful; else echo Please set serverip variable. ; fi\0"
-#define UPDATE_KERNEL \
-	"update_kernel=if test -n \"${serverip}\"; then run configure-ip && run test-nfsroot && nfs ${nfsroot}/boot/uboot_script && env import -t ${fileaddr} ${filesize} && if test -n \"${uboot_script_update_kernel}\"; then run uboot_script_update_kernel; else echo Bootscript does not define uboot_script_update kernel, aborting ; fi ; else echo Please set serverip variable. ; fi\0"
 #define UPDATE_ROOTFS \
 	"update_rootfs=if test -n \"${serverip}\"; then run configure-ip && run test-nfsroot && nfs ${nfsroot}/boot/uboot_script && env import -t ${fileaddr} ${filesize} && if test -n \"${uboot_script_update_rootfs}\" ; then run uboot_script_update_rootfs; else echo Bootscript does not define update_rootfs, aborting ; fi ; else echo Please set serverip variable. ; fi\0"
-#define RES_SYS \
-	"restore_sys=if test -n \"${serverip}\"; then run configure-ip && run test-nfsroot && nfs ${nfsroot}/boot/uboot_script && env import -t ${fileaddr} ${filesize} && if test -n \"${uboot_script_restore_sys}\"; then run uboot_script_restore_sys; else echo Bootscript does not define uboot_script_restore_sys, aborting. ; fi ; else echo Please set serverip variable. ; fi\0"
 
 /*
  * memory layout for 32M uncompressed/compressed kernel,
@@ -270,10 +264,7 @@
 	CONFIGURE_IP \
 	NFS_TEST \
 	NET_BOOT \
-	UPDATE_UBOOT \
-	UPDATE_KERNEL \
-	UPDATE_ROOTFS \
-	RES_SYS
+	UPDATE_ROOTFS
 
 #endif /* ifndef CONFIG_SPL_BUILD */
 #endif /* ifdef CONFIG_DISTRO_DEFAULTS*/
