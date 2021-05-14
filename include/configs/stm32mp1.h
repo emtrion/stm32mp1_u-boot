@@ -141,8 +141,8 @@
 	"if test ${boot_device} = serial || test ${boot_device} = usb; then " \
 		"stm32prog ${boot_device} ${boot_instance}; " \
 	"else " \
-		"if test ${boot_device} = mmc; then run emmc_boot; fi;" \
-		"if test ${boot_device} = nor; then run emmc_boot; fi;" \
+		"if test ${boot_device} = mmc; then run flash_boot; fi;" \
+		"if test ${boot_device} = nor; then run flash_boot; fi;" \
 	"fi;\0"
 
 /* DTIMG command added only for Android distribution */
@@ -219,8 +219,8 @@
 	"sd_boot=ext4load mmc 0:4 ${kernel_addr_r} /boot/${image.linux};" \
 	"setenv bootargs \"console=${console} root=/dev/mmcblk0p4 rw rootwait\";" \
 	"bootm ${kernel_addr_r};\0"
-#define EMMC_BOOT \
-	"emmc_boot=ext4load mmc 1:2 ${kernel_addr_r} /boot/${image.linux};" \
+#define FLASH_BOOT \
+	"flash_boot=ext4load mmc 1:2 ${kernel_addr_r} /boot/${image.linux};" \
 	"setenv bootargs \"console=${console} root=/dev/mmcblk1p2 rw rootwait\";" \
 	"bootm ${kernel_addr_r};\0"
 #define CONFIGURE_IP \
@@ -260,7 +260,7 @@
 	"bootlimit=0\0" \
 	STM32MP_BOOTCMD \
 	SD_BOOT \
-	EMMC_BOOT \
+	FLASH_BOOT \
 	CONFIGURE_IP \
 	NFS_TEST \
 	NET_BOOT \
