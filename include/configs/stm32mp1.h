@@ -214,15 +214,19 @@
 #endif
 
 #include <config_distro_bootcmd.h>
-
+#define DEFAULT_BOOT \
+	"bootcmd=run bootx\0" \
+	"bootx=$flash_boot\0" \
+	"flash_boot=run emmc_boot\0"
+#define EM_COMMON \
+	"ip-method=dhcp\0" \
+	"ext4_load_file=ext4load ${device_type} ${devnum}:${part} ${loadaddr} ${load_file}\0" \
+	"nfs_load_file=${device_type} ${loadaddr} ${nfsroot}${load_file}\0" \
+	"uboot_script_import=setenv loadaddr ${scriptaddr} && setenv load_file /boot/uboot_script && run ${fs_type}_load_file && env import -t ${fileaddr} ${filesize}\0"
 #define SD_BOOT \
-	"sd_boot=ext4load mmc 0:4 ${kernel_addr_r} /boot/${image.linux};" \
-	"setenv bootargs \"console=${console} root=/dev/mmcblk0p4 rw rootwait\";" \
-	"bootm ${kernel_addr_r};\0"
-#define FLASH_BOOT \
-	"flash_boot=ext4load mmc 1:2 ${kernel_addr_r} /boot/${image.linux};" \
-	"setenv bootargs \"console=${console} root=/dev/mmcblk1p2 rw rootwait\";" \
-	"bootm ${kernel_addr_r};\0"
+	"sd_boot=setenv device_type mmc && setenv fs_type ext4 && setenv devnum 0 && setenv part 4 && run uboot_script_import && run ${device_type}_boot\0"
+#define EMMC_BOOT \
+	"emmc_boot=setenv device_type mmc && setenv fs_type ext4 && setenv devnum 1 && setenv part 2 && run uboot_script_import && run ${device_type}_boot\0"
 #define CONFIGURE_IP \
 	"configure-ip=if test -n \"${ip-method}\"; \
 	then if test \"${ip-method}\" = dhcp; \
@@ -235,9 +239,9 @@
 #define NFS_TEST \
 	"test-nfsroot=if test -n \"${nfsroot}\"; then true ; else echo Please set nfsroot variable. ; false ; fi\0"
 #define NET_BOOT \
-	"net_boot=run configure-ip && run test-nfsroot && nfs ${nfsroot}/boot/uboot_script && env import -t ${fileaddr} ${filesize} && if test -n \"${uboot_script_net_boot}\"; then run uboot_script_net_boot; else echo Bootscript does not define uboot_script_net_boot, aborting. ; fi\0"
+	"net_boot=if test -n \"${serverip}\"; then run configure-ip && run test-nfsroot && setenv device_type nfs && setenv fs_type nfs && run uboot_script_import && if test -n \"${uboot_script_net_boot}\"; then run uboot_script_net_boot; else echo Bootscript does not define uboot_script_net_boot, aborting. ; fi ; else echo Please set serverip variable. ; fi\0"
 #define UPDATE_ROOTFS \
-	"update_rootfs=if test -n \"${serverip}\"; then run configure-ip && run test-nfsroot && nfs ${nfsroot}/boot/uboot_script && env import -t ${fileaddr} ${filesize} && if test -n \"${uboot_script_update_rootfs}\" ; then run uboot_script_update_rootfs; else echo Bootscript does not define update_rootfs, aborting ; fi ; else echo Please set serverip variable. ; fi\0"
+	"update_rootfs=if test -n \"${serverip}\"; then run configure-ip && run test-nfsroot && setenv device_type nfs && setenv fs_type nfs && run uboot_script_import && if test -n \"${uboot_script_update_rootfs}\" ; then run uboot_script_update_rootfs; else echo Bootscript does not define update_rootfs, aborting ; fi ; else echo Please set serverip variable. ; fi\0"
 
 /*
  * memory layout for 32M uncompressed/compressed kernel,
@@ -258,9 +262,10 @@
 	"fdt_high=0xffffffff\0" \
 	"initrd_high=0xffffffff\0" \
 	"bootlimit=0\0" \
-	STM32MP_BOOTCMD \
+	DEFAULT_BOOT \
+	EM_COMMON \
 	SD_BOOT \
-	FLASH_BOOT \
+	EMMC_BOOT \
 	CONFIGURE_IP \
 	NFS_TEST \
 	NET_BOOT \
