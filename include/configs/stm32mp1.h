@@ -141,8 +141,8 @@
 	"if test ${boot_device} = serial || test ${boot_device} = usb; then " \
 		"stm32prog ${boot_device} ${boot_instance}; " \
 	"else " \
-		"if test ${boot_device} = mmc; then run flash_boot; fi;" \
-		"if test ${boot_device} = nor; then run flash_boot; fi;" \
+		"if test ${boot_device} = mmc; then run bootx; fi;" \
+		"if test ${boot_device} = nor; then run bootx; fi;" \
 	"fi;\0"
 
 /* DTIMG command added only for Android distribution */
@@ -214,8 +214,7 @@
 #endif
 
 #include <config_distro_bootcmd.h>
-#define DEFAULT_BOOT \
-	"bootcmd=run bootx\0" \
+#define EM_BOOTX \
 	"bootx=$flash_boot\0" \
 	"flash_boot=run emmc_boot\0"
 #define EM_COMMON \
@@ -262,7 +261,8 @@
 	"fdt_high=0xffffffff\0" \
 	"initrd_high=0xffffffff\0" \
 	"bootlimit=0\0" \
-	DEFAULT_BOOT \
+	STM32MP_BOOTCMD \
+	EM_BOOTX \
 	EM_COMMON \
 	SD_BOOT \
 	EMMC_BOOT \
